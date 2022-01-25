@@ -136,12 +136,8 @@ NSString *_bs_backtraceOfThread(thread_t thread) {
     backtraceBuffer[i] = instructionAddress;
     ++i;
     
-    // 这里为什么要在调用栈里先存储lr呢? 和索引2不会重复吗
-//    uintptr_t linkRegister = bs_mach_linkRegister(&machineContext);
-//    if (linkRegister) {
-//        backtraceBuffer[i] = linkRegister;
-//        i++;
-//    }
+    // 这里为什么要在调用栈里先存储lr呢?
+    uintptr_t linkRegister = bs_mach_linkRegister(&machineContext);
     
     if(instructionAddress == 0) {
         return @"Fail to get instruction address";
@@ -156,6 +152,13 @@ NSString *_bs_backtraceOfThread(thread_t thread) {
        // 将fp存储的内容 (pre fp指针)存储到previous, fp+1 存储的内容(lr)存储到return_address
        bs_mach_copyMem((void *)framePtr, &frame, sizeof(frame)) != KERN_SUCCESS) {
         return @"Fail to get frame pointer";
+    }
+    
+    // lr和fp读取的数据不相等, 是因为arm64下 编译器做的优化处理,即叶子函数复用调用函数的调用栈fp, 但是lr和sp是没有复用的, 所以为了避免丢帧,使用lr填充
+    if (linkRegister != 0 && frame.return_address != linkRegister)
+    {
+        backtraceBuffer[i] = linkRegister;
+        i++;
     }
     
     // 只存储50个调用栈, 防止调用栈过大(例如死循环)

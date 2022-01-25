@@ -10,6 +10,7 @@
 
 #import "ViewController.h"
 #import "BSBacktraceLogger.h"
+#import "JYCallStack.h"
 
 @interface ViewController ()
 
@@ -23,13 +24,15 @@
 
 - (void)bar {
     int i= 0;
-//    while (i < 1000000000)
-//    {
-//        i++;
-//        
-//    }
-//    
+    while (i < 1000000000)
+    {
+        i++;
+
+    }
+//
+    
 //    sleep(1000);
+    
     [self test7];
 }
 
@@ -63,7 +66,7 @@
 }
 
 - (void)test8 {
-    [BSBacktraceLogger bs_backtraceOfCurrentThread];
+//    [BSBacktraceLogger bs_backtraceOfCurrentThread];
 }
 
 - (void)viewDidLoad {
@@ -71,6 +74,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         BSLOG_MAIN  // 打印主线程调用栈， BSLOG 打印当前线程，BSLOG_ALL 打印所有线程
         // 调用 [BSBacktraceLogger bs_backtraceOfCurrentThread] 这一系列的方法可以获取字符串，然后选择上传服务器或者其他处理。
+//        [JYCallStack callStackWithThread:JYCallStackTypeAllThread];
     });
     [self test1];
 }
