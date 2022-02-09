@@ -417,7 +417,7 @@ bool bs_dladdr(const uintptr_t address, Dl_info* const info) {
                  uint64_t n_value;      // value of this symbol (or stab offset)
              };
             */
-            // 符号表地址(内存中真实虚拟地址)
+            // 符号表地址(内存中真实虚拟地址), nlist_64的数组
             const BS_NLIST* symbolTable = (BS_NLIST*)(segmentBase + symtabCmd->symoff);
             
             // 字符串表的真实地址
